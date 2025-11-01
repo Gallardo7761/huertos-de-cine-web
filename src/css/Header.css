@@ -1,0 +1,15 @@
+.header {
+    background-color: var(--selective-yellow);
+}
+
+.header h1 {
+    font-size: 4.5em;
+    font-weight: bold;
+    color: var(--cocoa-brown) !important;
+}
+
+.user-name {
+    font-size: 1.25rem;
+    color: var(--selective-yellow);
+    font-weight: bold;
+}

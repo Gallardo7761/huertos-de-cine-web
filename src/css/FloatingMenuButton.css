@@ -1,0 +1,19 @@
+.floating-menu-button {
+    z-index: 1000;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--selective-yellow);
+    color: var(--cocoa-brown) !important;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.floating-menu-button:hover {
+    background-color: var(--selective-yellow-light);
+}
