@@ -11,15 +11,18 @@ import { ConfigProvider } from '@/context/ConfigContext.jsx'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import '@/css/index.css'
+import { ErrorProvider } from '@/context/ErrorContext.jsx'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ConfigProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </AuthProvider>
+      <ErrorProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </AuthProvider>
+      </ErrorProvider>
     </ConfigProvider>
   </StrictMode>,
 )

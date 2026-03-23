@@ -6,11 +6,18 @@ import { DataProvider } from "@/context/DataContext";
 import { useConfig } from "@/hooks/useConfig";
 import { useDataContext } from "@/hooks/useDataContext";
 import '@/css/Admin.css';
+import { useError } from "@/context/ErrorContext";
 
 const Admin = () => {
     const { config, configLoading } = useConfig();
+    const { showError } = useError();
 
-    if (configLoading) return <p><LoadingIcon /></p>;
+    if (configLoading) return (
+        <div className="text-center py-5">
+            <div className="spinner-border primary" role="status"></div>
+            <p className="mt-2">Cargando...</p>
+        </div>
+    );
 
     const reqConfig = {
         baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.viewers.all}`,
@@ -18,7 +25,7 @@ const Admin = () => {
     };
 
     return (
-        <DataProvider config={reqConfig}>
+        <DataProvider config={reqConfig} onError={showError}>
             <AdminContent reqConfig={reqConfig} />
         </DataProvider>
     );
@@ -32,7 +39,6 @@ const AdminContent = ({ reqConfig }) => {
             <div className="spinner-border primary" role="status"></div>
             <p className="mt-2">Cargando...</p>
         </div>
-
     );
     if (dataError) return <p>Error: {dataError.message}</p>;
 
