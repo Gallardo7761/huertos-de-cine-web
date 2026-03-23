@@ -1,46 +1,28 @@
 {
     "apiConfig": {
-        "baseUrl": "https://api.miarma.net/cine/v1",
-        "baseRawUrl": "https://api.miarma.net/cine/raw/v1",
-        "coreUrl": "https://api.miarma.net/v1",
-        "coreRawUrl": "https://api.miarma.net/raw/v1",
-        "authUrl": "https://api.miarma.net/auth/v1",
+        "baseUrl": "http://localhost:8084/v2/cine",
+        "coreUrl": "http://localhost:8080/v2/core",
         "endpoints": {
             "auth": {
-                "login": "/login",
-                "validateToken": "/validate-token",
-                "refreshToken": "/refresh-token",
-                "changePassword": "/change-password",
-                "loginValidate": "/login/validate"
-            },
-            "movies": {
-                "getAll": "/movies",
-                "getById": "/movies/:movie_id",
-                "getVotes": "/movies/:movie_id/votes",
-                "getVotesSelf": "/movies/:movie_id/votes/self"
+                "login": "/auth/login",
+                "refreshToken": "/auth/refresh",
+                "changePassword": "/auth/change-password",
+                "validateToken": "/auth/validate"
             },
             "viewers": {
-                "getAll": "/viewers",
-                "getById": "/viewers/:viewer_id",
-                "getVotesByUserAndMovieId": "/viewers/:viewer_id/votes/:movie_id",
-                "metadata": "/viewers/metadata"
+                "all": "/viewers",
+                "byId": "/viewers/:userId"
             },
-            "files": {
-                "all": "/files",
-                "byId": "/files/:file_id",
-                "upload": "/files/upload",
-                "download": "/files/download/:file_id",
-                "userFiles": "/files/myfiles"
+            "movies": {
+                "all": "/movies",
+                "byId": "/movies/:movieId",
+                "upvote": "/movies/:movieId/upvote",
+                "downvote": "/movies/:movieId/downvote"
             },
-            "users": {
-                "getAll": "/users",
-                "getById": "/users/:user_id",
-                "getStatus": "/users/:user_id/status",
-                "getRole": "/users/:user_id/role",
-                "checkExists": "/users/:user_id/exists",
-                "getAvatar": "/users/:user_id/avatar",
-                "updateAvatar": "/users/:user_id/avatar",
-                "getSelfInfo": "/users/me"
+            "requests": {
+                "all": "/requests",
+                "accept": "/requests/:requestId/accept",
+                "reject": "/requests/:requestId/reject"
             }
         }
     }

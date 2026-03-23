@@ -1,25 +1,74 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import axios from "axios";
 
-export const useData = (config) => {
+export const useData = (config, onError) => {
   const [data, setData] = useState(null);
   const [dataLoading, setLoading] = useState(true);
   const [dataError, setError] = useState(null);
-  const configRef = useRef(config); // inicializa directamente
+  const configRef = useRef();
 
   useEffect(() => {
     if (config?.baseUrl) {
-      configRef.current = config; // actualiza la referencia al nuevo config
+      configRef.current = config;
     }
   }, [config]);
 
-  const getAuthHeaders = () => ({
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${localStorage.getItem("token")}`,
-  });
+  const getAuthHeaders = (isFormData = false) => {
+    const token = localStorage.getItem("token");
+
+    const headers = {};
+    if (token) headers.Authorization = `Bearer ${token}`;
+
+    if (!isFormData) {
+      headers["Content-Type"] = "application/json";
+    }
+
+    return headers;
+  };
+
+  const handleAxiosError = (err) => {
+    if (err.response && err.response.data) {
+      const data = err.response.data;
+
+      if (data.status === 422 && data.errors) {
+        return {
+          status: 422,
+          errors: data.errors,
+          path: data.path ?? null,
+          timestamp: data.timestamp ?? null,
+        };
+      }
+
+      return {
+        status: data.status ?? err.response.status,
+        error: data.error ?? null,
+        message: data.message ?? err.response.statusText ?? "Error desconocido",
+        path: data.path ?? null,
+        timestamp: data.timestamp ?? null,
+      };
+    }
+
+    if (err.request) {
+      return {
+        status: null,
+        error: "Network Error",
+        message: "No se pudo conectar al servidor",
+        path: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+
+    return {
+      status: null,
+      error: "Client Error",
+      message: err.message || "Error desconocido",
+      path: null,
+      timestamp: new Date().toISOString(),
+    };
+  };
 
   const fetchData = useCallback(async () => {
-    const current = configRef.current; // usa el ref más actualizado
+    const current = configRef.current;
     if (!current?.baseUrl) return;
 
     setLoading(true);
@@ -30,106 +79,60 @@ export const useData = (config) => {
         headers: getAuthHeaders(),
         params: current.params,
       });
-      setData(response.data.data);
+      setData(response.data);
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      const error = handleAxiosError(err);
+      setError(error);
     } finally {
       setLoading(false);
     }
-  }, []); // <- sin dependencias porque usamos configRef y funciones puras
+  }, []);
 
-  // este useEffect se ejecuta una vez al montar o cuando cambie el config.baseUrl
   useEffect(() => {
-    if (config?.baseUrl) {
-      fetchData(); // safe: fetchData está memoizado
-    }
-  }, [config?.baseUrl, fetchData]); // <- dependencia estable y limpia
+    if (config?.baseUrl) fetchData();
+  }, [config, fetchData]);
 
-  // función pública para forzar refetch
-  const refetch = () => {
-    fetchData();
-  };
-
-  const getData = async (url, params = {}) => {
+  const requestWrapper = async (method, endpoint, payload = null, refresh = false, extraHeaders = {}) => {
     try {
-      const response = await axios.get(url, {
-        headers: getAuthHeaders(),
-        params,
-      });
-      return { data: response.data.data, error: null };
-    } catch (err) {
-      return {
-        data: null,
-        error: err.response?.data?.message || err.message,
+      const isFormData = payload instanceof FormData;
+      const baseHeaders = getAuthHeaders(isFormData);
+      
+      const cfg = { 
+        headers: { ...baseHeaders, ...extraHeaders } 
       };
-    }
-  };
-
-  const postData = async (endpoint, payload) => {
-    const headers = {
-      Authorization: `Bearer ${localStorage.getItem("token")}`,
-      ...(payload instanceof FormData ? {} : { "Content-Type": "application/json" }),
-    };
-    const response = await axios.post(endpoint, payload, { headers });
-    await fetchData();
-    return response.data.data;
-  };
-
-  const postDataValidated = async (endpoint, payload) => {
-    try {
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-        ...(payload instanceof FormData ? {} : { "Content-Type": "application/json" }),
-      };
-      const response = await axios.post(endpoint, payload, { headers });
-      return { data: response.data.data, errors: null };
-    } catch (err) {
-      const raw = err.response?.data?.message;
-      let parsed = {};
-      try {
-        parsed = JSON.parse(raw);
-      } catch {
-        return { data: null, errors: { general: raw || err.message } };
+      
+      let response;
+      if (method === "get") {
+        if (payload) cfg.params = payload;
+        response = await axios.get(endpoint, cfg);
+      } else if (method === "delete") {
+        if (payload) cfg.data = payload;
+        response = await axios.delete(endpoint, cfg);
+      } else {
+        response = await axios[method](endpoint, payload, cfg);
       }
-      return { data: null, errors: parsed };
+
+      if (refresh) await fetchData();
+      return response.data;
+
+    } catch (err) {
+      const error = handleAxiosError(err);
+      if (error.status !== 422 && onError) onError(error);
+      setError(error);
+      throw error;
     }
   };
 
-  const putData = async (endpoint, payload) => {
-    const response = await axios.put(endpoint, payload, {
-      headers: getAuthHeaders(),
-    });
-    await fetchData();
-    return response.data.data;
-  };
-
-  const deleteData = async (endpoint) => {
-    const response = await axios.delete(endpoint, {
-      headers: getAuthHeaders(),
-    });
-    await fetchData();
-    return response.data.data;
-  };
-
-  const deleteDataWithBody = async (endpoint, payload) => {
-    const response = await axios.delete(endpoint, {
-      headers: getAuthHeaders(),
-      data: payload,
-    });
-    await fetchData();
-    return response.data.data;
-  };
+  const clearError = () => setError(null);
 
   return {
     data,
     dataLoading,
     dataError,
-    getData,
-    postData,
-    postDataValidated,
-    putData,
-    deleteData,
-    deleteDataWithBody,
-    refetch, // el refetch usable desde fuera
+    clearError,
+    getData: (url, params, refresh = true, headers = {}) => requestWrapper("get", url, params, refresh, headers),
+    postData: (url, body, refresh = true, headers = {}) => requestWrapper("post", url, body, refresh, headers),
+    putData: (url, body, refresh = true, headers = {}) => requestWrapper("put", url, body, refresh, headers),
+    deleteData: (url, refresh = true, headers = {}) => requestWrapper("delete", url, null, refresh, headers),
   };
 };

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { parseJwt } from "../util/tokenUtils.js";
-import NotificationModal from "../components/NotificationModal.jsx";
+import { parseJwt } from "@/util/tokenUtils.js";
+import NotificationModal from "@/components/NotificationModal.jsx";
 import axios from "axios";
 import { useAuth } from "./useAuth.js";
 import { useConfig } from "./useConfig.js";

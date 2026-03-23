@@ -9,6 +9,7 @@ import { AuthContext } from "@/context/AuthContext.jsx";
 import useBreakpoint from '@/hooks/useBreakpoint';
 
 import '@/css/LoginForm.css';
+import { CONSTANTS } from '@/util/constants.js';
 
 const LoginForm = () => {
     const { login, error } = useContext(AuthContext);
@@ -16,9 +17,9 @@ const LoginForm = () => {
     const bp = useBreakpoint();
 
     const [formState, setFormState] = useState({
-        emailOrUserName: "",
+        username: "",
         password: "",
-        keepLoggedIn: false
+        serviceId: CONSTANTS.SERVICE_ID
     });
 
     const handleChange = (e) => {
@@ -28,21 +29,8 @@ const LoginForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.emailOrUserName);
-        const loginBody = {
-            password: formState.password,
-            keepLoggedIn: Boolean(formState.keepLoggedIn),
-        };
-
-        if (isEmail) {
-            loginBody.email = formState.emailOrUserName;
-        } else {
-            loginBody.userName = formState.emailOrUserName;
-        }
-
         try {
-            await login(loginBody);
+            await login(formState);
             navigate("/");
         } catch (err) {
             console.error("Error de login:", err.message);
@@ -57,16 +45,16 @@ const LoginForm = () => {
                     <div className="position-relative w-100">
                         <Form.Label htmlFor="login-input" className="fw-semibold">
                             <FontAwesomeIcon icon={faUser} className="me-2" />
-                            Usuario o Email
+                            Usuario
                         </Form.Label>
                         <Form.Control
                             id="login-input"
                             type="text"
-                            name="emailOrUserName"
-                            value={formState.emailOrUserName}
+                            name="username"
+                            value={formState.username}
                             onChange={handleChange}
                             className="rounded-4"
-                            placeholder="Escribe tu usuario o email"
+                            placeholder="Introduce tu usuario"
                         />
                     </div>
 
@@ -76,7 +64,7 @@ const LoginForm = () => {
                         name="password"
                     />
 
-                    <div className="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
+                    {/**<div className="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
                         <Form.Check
                             type="checkbox"
                             name="keepLoggedIn"
@@ -90,7 +78,7 @@ const LoginForm = () => {
                                 }));
                             }}
                         />
-                    </div>
+                    </div> */}
                 </div>
 
                 {error && (

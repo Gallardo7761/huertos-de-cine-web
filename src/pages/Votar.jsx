@@ -15,7 +15,7 @@ const Votar = () => {
     if (configLoading) return <p><LoadingIcon /></p>;
 
     const reqConfig = {
-        baseUrl: `${config.apiConfig.baseRawUrl}${config.apiConfig.endpoints.movies.getAll}`,
+        baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.movies.all}`,
         params: {},
     };
 
@@ -28,47 +28,35 @@ const Votar = () => {
 
 const VotarContent = () => {
   const { data, loading, error } = useDataContext();
-  const [alertShown, setAlertShown] = useState(() => localStorage.getItem('alertShown') === 'true');
-  const [showAlert, setShowAlert] = useState(!alertShown);
-
-  useEffect(() => {
-    if (!showAlert) return;
-
-    localStorage.setItem('alertShown', 'true');
-    setAlertShown(true);
-
-  }, [showAlert]);
+  const [showAlert, setShowAlert] = useState(() => localStorage.getItem('alertShown') !== 'true');
 
   const handleCloseAlert = () => {
+    localStorage.setItem('alertShown', 'true');
     setShowAlert(false);
   };
 
-  if (loading) return <p><LoadingIcon /></p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (loading) return <LoadingIcon />;
+  if (error) return <Alert variant="danger">Error: {error.message}</Alert>;
 
   return (
     <main className="row m-0 p-0 justify-content-center">
-
       {showAlert && (
-        <Alert
-          className="col-6 m-0 mt-3 text-center"
-          variant="warning"
-          role="alert"
-          dismissible
-          onClose={handleCloseAlert}
-        >
-          <strong>Tip: haz click en la portada de una película para ver su descripción</strong>
+        <Alert className="col-10 col-md-6 m-0 mt-3 text-center" variant="warning" dismissible onClose={handleCloseAlert}>
+          <strong>Tip: haz click en la portada para ver la descripción</strong>
         </Alert>
       )}
 
-      <div className="row gap-3 mt-3 justify-content-center">
+      <div className="row gap-4 mt-4 justify-content-center w-100">
         {data?.map((movie) => (
           <MovieCard
-            key={movie.movie_id}
-            movie_id={movie.movie_id}
+            key={movie.movieId}
+            movie_id={movie.movieId}
             title={movie.title}
             description={movie.description}
             cover={movie.cover}
+            upvotes={movie.upvotes}
+            downvotes={movie.downvotes}
+            userVote={movie.userVote} 
           />
         ))}
       </div>

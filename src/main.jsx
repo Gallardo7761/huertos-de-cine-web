@@ -4,7 +4,6 @@ import { createRoot } from 'react-dom/client'
 /* COMPONENTS */
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
-import { ThemeProvider } from '@/context/ThemeContext'
 import { AuthProvider } from '@/context/AuthContext'
 import { ConfigProvider } from '@/context/ConfigContext.jsx'
 
@@ -16,13 +15,11 @@ import '@/css/index.css'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <ConfigProvider>
-      <ThemeProvider>
-        <AuthProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </AuthProvider>
-      </ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </AuthProvider>
     </ConfigProvider>
   </StrictMode>,
 )

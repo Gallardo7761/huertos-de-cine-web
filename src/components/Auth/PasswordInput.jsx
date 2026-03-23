@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Form } from 'react-bootstrap';
-import '../../css/PasswordInput.css';
+import '@/css/PasswordInput.css';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEye, faEyeSlash, faKey } from '@fortawesome/free-solid-svg-icons';

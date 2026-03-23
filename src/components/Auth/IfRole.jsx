@@ -1,11 +1,11 @@
-import { useAuth } from "@/hooks/useAuth.js";
+import { useAuth } from "../../hooks/useAuth.js";
 
 const IfRole = ({ roles, children }) => {
-  const { user, authStatus } = useAuth();
+  const { identity, authStatus } = useAuth();
 
   if (authStatus !== "authenticated") return null;
 
-  const userRole = user?.role;
+  const userRole = identity?.metadata?.role;
   
   return roles.includes(userRole) ? children : null;
 };
