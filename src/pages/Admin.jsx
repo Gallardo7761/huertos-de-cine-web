@@ -46,10 +46,18 @@ const AdminContent = () => {
     const viewers = data?.viewers || [];
     const movies = data?.movies || [];
 
+    const pendingRequests = requests.filter(req => req.status === 0);
+    const activeViewers = viewers.filter(viewer => viewer.account?.status === 1);
+
     const getUrl = (path) => `${config.apiConfig.baseUrl}${path}`;
 
     const handleAcceptRequest = async (requestId) => {
         const endpoint = config.apiConfig.endpoints.requests.accept.replace(':requestId', requestId);
+        await postData(getUrl(endpoint), {});
+    };
+
+    const handleRejectRequest = async (requestId) => {
+        const endpoint = config.apiConfig.endpoints.requests.reject.replace(':requestId', requestId);
         await postData(getUrl(endpoint), {});
     };
 
@@ -70,15 +78,15 @@ const AdminContent = () => {
     };
 
     const handleDeleteViewer = async (identity) => {
-        const endpoint = config.apiConfig.endpoints.viewers.all;
+        const endpoint = config.apiConfig.endpoints.viewers.status.replace(':userId', identity.user.userId);
         await postData(getUrl(endpoint), {
-            userId: identity.user.userId,
-            role: 0,
-            status: 0,
+            status: 0
         });
     };
 
-    if (dataLoading) return <section className="text-center py-5"><LoadingIcon /></section>;
+    const isFirstLoad = dataLoading && !data; 
+
+    if (isFirstLoad) return <section className="text-center py-5"><LoadingIcon /></section>;
     if (dataError) return <div className="container py-4"><Alert variant="danger">{dataError.message}</Alert></div>;
 
     return (
@@ -87,12 +95,12 @@ const AdminContent = () => {
             <section className="admin-section mb-4">
                 <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
                     <h2 className="m-0 text-white">Solicitudes</h2>
-                    <small className="text-muted">{requests.length} solicitudes</small>
+                    <small className="text-muted">{pendingRequests.length} solicitudes</small>
                 </div>
                 <div className="rounded-4 p-3 user-container">
                     <div className="row g-3 m-0">
-                        {requests.length === 0 ? <p className="admin-empty-state m-0">Sin solicitudes.</p> : 
-                            requests.map(req => <UserCard key={req.requestId} identity={{user: req, account: {status: 0}}} renderMode="add" onAdd={() => handleAcceptRequest(req.requestId)} />)}
+                        {pendingRequests.length === 0 ? <p className="admin-empty-state m-0">Sin solicitudes.</p> : 
+                            pendingRequests.map(req => <UserCard key={req.requestId} identity={{user: req, account: {status: 0}}} renderMode="add" onAdd={() => handleAcceptRequest(req.requestId)} onReject={() => handleRejectRequest(req.requestId)} />)}
                     </div>
                 </div>
             </section>
@@ -100,12 +108,12 @@ const AdminContent = () => {
             <section className="admin-section mb-4">
                 <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
                     <h2 className="m-0 text-white">Usuarios añadidos</h2>
-                    <small className="text-muted">{viewers.length} usuarios</small>
+                    <small className="text-muted">{activeViewers.length} usuarios</small>
                 </div>
                 <div className="rounded-4 p-3 user-container">
                     <div className="row g-3 m-0">
-                        {viewers.length === 0 ? <p className="admin-empty-state m-0">Sin usuarios.</p> : 
-                            viewers.map(v => <UserCard key={v.user.userId} identity={v} renderMode="delete" onDelete={() => handleDeleteViewer(v)} />)}
+                        {activeViewers.length === 0 ? <p className="admin-empty-state m-0">Sin usuarios.</p> : 
+                            activeViewers.map(v => <UserCard key={v.user.userId} identity={v} renderMode="delete" onDelete={() => handleDeleteViewer(v)} />)}
                     </div>
                 </div>
             </section>

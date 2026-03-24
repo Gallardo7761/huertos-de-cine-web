@@ -14,7 +14,8 @@
             },
             "viewers": {
                 "all": "/viewers",
-                "byId": "/viewers/:userId"
+                "byId": "/viewers/:userId",
+                "status": "/viewers/:userId/status"
             },
             "movies": {
                 "all": "/movies",

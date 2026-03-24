@@ -1,15 +1,37 @@
 .header {
-    background-color: var(--accent-primary);
+    background: repeating-linear-gradient(
+        -45deg,
+        var(--bg-main) 0,
+        var(--bg-main) 35px,
+        var(--accent-primary) 35px,
+        var(--accent-primary) 70px
+    );
+    position: relative;
+    padding-left: 3rem;
+    border-bottom: 4px solid var(--bg-main);
 }
 
 .header h1 {
     font-size: 4.5em;
     font-weight: bold;
-    color: var(--bg-main) !important;
+    color: var(--accent-primary) !important;
+    
+    background-color: var(--bg-main);
+    padding: 0.5rem 1.5rem;
+    display: inline-block;
+    border-radius: 12px;
+    border: 3px solid var(--accent-primary);
+    
+    transform: rotate(-3deg);
+    box-shadow: 4px 4px 0px var(--accent-primary);
 }
 
 .user-name {
     font-size: 1.25rem;
-    color: var(--accent-primary);
+    color: var(--bg-main);
+    background-color: var(--accent-primary);
+    padding: 0.2rem 0.8rem;
+    border-radius: 6px;
     font-weight: bold;
+    display: inline-block;
 }
