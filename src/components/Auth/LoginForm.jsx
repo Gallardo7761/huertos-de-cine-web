@@ -37,7 +37,7 @@ const LoginForm = () => {
 
     return (
         <div className="login-card card shadow p-5 rounded-5 mx-auto col-12 col-md-8 col-lg-6 col-xl-5 d-flex flex-column gap-4">
-            <h1 className="text-center">Hola ¿te conozco?</h1>
+            <h1 className="text-center">Identifícate</h1>
             <Form className="d-flex flex-column gap-4" onSubmit={handleSubmit}>
                 <div className="d-flex flex-column gap-3">
                     <div className="position-relative w-100">

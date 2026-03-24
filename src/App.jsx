@@ -17,7 +17,11 @@ const App = () => {
       {renewalModal}
       <Header />
       <Routes>
-        <Route path="/" element={<Votar />} />
+        <Route path="/" element={
+          <ProtectedRoute minimumRoles={[CONSTANTS.ROLE_USER, CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>
+            <Votar />
+          </ProtectedRoute>
+        } />
         <Route path="/login" element={<Login />} />
         <Route path="/admin" element={
           <ProtectedRoute minimumRoles={[CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>

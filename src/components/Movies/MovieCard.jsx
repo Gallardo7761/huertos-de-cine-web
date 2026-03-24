@@ -39,23 +39,21 @@ const MovieCard = ({ movie_id, title, description, cover, upvotes, downvotes, us
           style={{ cursor: 'pointer' }}
         />
 
-        <IfRole roles={[CONSTANTS.ROLE_USER, CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]} >
-          <div className="card-footer movie-vote rounded-bottom-4">
-            <div className="d-flex align-items-center justify-content-center gap-3">
-              <span onClick={() => onVote(movie_id, 1)} className={`vote-button ${userVote === 1 ? 'active-up' : ''}`}>
-                <FontAwesomeIcon icon={faThumbsUp} />
-              </span>
+        <div className="card-footer movie-vote rounded-bottom-4">
+          <div className="d-flex align-items-center justify-content-center gap-3">
+            <span onClick={() => onVote(movie_id, 1)} className={`vote-button ${userVote === 1 ? 'active-up' : ''}`}>
+              <FontAwesomeIcon icon={faThumbsUp} />
+            </span>
 
-              <small className={`fw-bold vote-score ${userVote === 1 ? 'score-up' : userVote === -1 ? 'score-down' : ''}`}>
-                {totalScore}
-              </small>
+            <small className={`fw-bold vote-score ${userVote === 1 ? 'score-up' : userVote === -1 ? 'score-down' : ''}`}>
+              {totalScore}
+            </small>
 
-              <span onClick={() => onVote(movie_id, -1)} className={`vote-button ${userVote === -1 ? 'active-down' : ''}`}>
-                <FontAwesomeIcon icon={faThumbsDown} />
-              </span>
-            </div>
+            <span onClick={() => onVote(movie_id, -1)} className={`vote-button ${userVote === -1 ? 'active-down' : ''}`}>
+              <FontAwesomeIcon icon={faThumbsDown} />
+            </span>
           </div>
-        </IfRole >
+        </div>
       </div>
 
       <CustomModal show={modal} onClose={() => setModal(false)} title={title}>
