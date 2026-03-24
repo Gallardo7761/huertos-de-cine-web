@@ -7,16 +7,39 @@ import { useNavigate } from 'react-router-dom';
 import IfRole from '@/components/Auth/IfRole';
 import { CONSTANTS } from '@/util/constants';
 import IfNotAuthenticated from './Auth/IfNotAuthenticated';
+import { useConfig } from '@/hooks/useConfig';
+import { useState } from 'react';
+import CustomModal from './CustomModal';
+import RequestForm from './Requests/RequestForm';
+import { useData } from '@/hooks/useData';
 
 const Header = () => {
     const { logout } = useAuth();
+    const { config } = useConfig();
+    const { postData } = useData();
     const navigate = useNavigate();
+
+    const [showRegisterModal, setShowRegisterModal] = useState(false);
+
     const identity = JSON.parse(localStorage.getItem("identity")) ?? "invitado";
 
     const handleLogout = () => {
         logout();
         navigate('/login', { replace: true });
     }
+
+    const handleSendRequest = async (formData) => {
+        try {
+            const url = `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.requests.all}`;
+            await postData(url, formData);
+            setShowRegisterModal(false);
+            
+            alert("Solicitud enviada");
+        } catch (error) {
+            console.error("Error al enviar solicitud:", error);
+            alert("Error al enviar solicitud");
+        }
+    };
 
     return (
         <>
@@ -46,12 +69,15 @@ const Header = () => {
                             </Link>
                         </IfAuthenticated>
                         <IfNotAuthenticated>
-                            <Link to="/login" onClick={handleLogout} className="nav-link p-0">
+                            <Link to="/login" className="nav-link p-0">
                                 Iniciar sesión
                             </Link>
-                            <Link to="/apuntarse" onClick={handleLogout} className="nav-link p-0">
+                            <button 
+                                onClick={() => setShowRegisterModal(true)} 
+                                className="nav-link p-0 bg-transparent border-0 text-start"
+                            >
                                 Apuntarse
-                            </Link>
+                            </button>
                         </IfNotAuthenticated>
                     </div>
                 }
@@ -60,6 +86,17 @@ const Header = () => {
                     <li className="nav-item user-name nav-link p-0">{`@${identity?.account?.username}`}</li>
                 </IfAuthenticated>
             </Navbar>
+
+            <CustomModal 
+                show={showRegisterModal} 
+                onClose={() => setShowRegisterModal(false)} 
+                title="Apuntarse"
+            >
+                <RequestForm 
+                    onSubmit={handleSendRequest} 
+                    onCancel={() => setShowRegisterModal(false)} 
+                />
+            </CustomModal>
         </>
     );
 }
