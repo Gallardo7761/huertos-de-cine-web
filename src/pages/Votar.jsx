@@ -7,23 +7,30 @@ import { useDataContext } from "@/hooks/useDataContext";
 import { useConfig } from "@/hooks/useConfig";
 import { Alert } from "react-bootstrap";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useError } from "@/context/ErrorContext";
+import "@/css/Votar.css";
+
+const identity = JSON.parse(localStorage.getItem('identity') || '{}');
+const userId = identity.user?.userId || identity.userId;
 
 const Votar = () => {
   const { config, configLoading } = useConfig();
   const { showError } = useError();
 
   if (configLoading) return (
-    <div className="text-center py-5">
+    <section className="text-center py-5" role="status" aria-live="polite" aria-label="Cargando películas">
       <div className="spinner-border primary" role="status"></div>
       <p className="mt-2">Cargando...</p>
-    </div>
+    </section>
   );
 
   const reqConfig = {
     baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.movies.all}`,
     params: {},
+    headers: {
+      "X-User-Id": userId
+    }
   };
 
   return (
@@ -34,20 +41,18 @@ const Votar = () => {
 }
 
 const VotarContent = () => {
-  const { data, loading, error, postData, putData, deleteData } = useDataContext();
+  const { data, dataLoading, dataError, postData, putData, deleteData } = useDataContext();
   const { config } = useConfig();
-  const [showAlert, setShowAlert] = useState(() => localStorage.getItem('alertShown') !== 'true');
+  const [showAlert, setShowAlert] = useState(() => localStorage.getItem("votarTipDismissed") !== "true");
+  const movies = Array.isArray(data) ? data : [];
 
   const handleCloseAlert = () => {
-    localStorage.setItem('alertShown', 'true');
+    localStorage.setItem("votarTipDismissed", "true");
     setShowAlert(false);
   };
 
   const handleVote = async (movie_id, type) => {
     if (!config) return;
-
-    const identity = JSON.parse(localStorage.getItem('identity') || '{}');
-    const userId = identity.user?.userId || identity.userId;
 
     const action = type === 1 ? 'upvote' : 'downvote';
     const url = `${config.apiConfig.baseUrl}/movies/${movie_id}/${action}`;
@@ -79,34 +84,67 @@ const VotarContent = () => {
     }
   };
 
-  if (loading) return <div className="text-center py-5"><LoadingIcon /></div>;
-  if (error) return <Alert variant="danger">Error: {error.message}</Alert>;
+  if (dataLoading && !movies.length) {
+    return (
+      <section className="text-center py-5" role="status" aria-live="polite" aria-label="Cargando cartelera">
+        <LoadingIcon />
+      </section>
+    );
+  }
+
+  if (dataError) {
+    return (
+      <main className="container py-4" role="main">
+        <Alert variant="danger" role="alert">
+          Error: {dataError.message}
+        </Alert>
+      </main>
+    );
+  }
 
   return (
-    <main className="row m-0 p-0 justify-content-center">
+    <main className="container py-4" aria-labelledby="votar-title">
+      <header className="votar-header text-center mb-5 px-2">
+        <h1 id="votar-title" className="mb-3">Votación de películas</h1>
+        <p className="votar-subtitle m-0">Elige tus favoritas con voto positivo o negativo.</p>
+      </header>
+
       {showAlert && (
-        <Alert className="col-10 col-md-6 m-0 mt-3 text-center" variant="warning" dismissible onClose={handleCloseAlert}>
+        <Alert
+          className="mx-auto mb-3 text-center col-11 col-md-10 col-lg-8"
+          variant="warning"
+          dismissible
+          onClose={handleCloseAlert}
+          role="status"
+        >
           <strong>Tip: haz click en la portada para ver la descripción</strong>
         </Alert>
       )}
 
-      <div className="row gap-4 mt-4 justify-content-center w-100">
-        {data?.map((movie) => (
-          <MovieCard
-            key={movie.movieId}
-            movie_id={movie.movieId}
-            title={movie.title}
-            description={movie.description}
-            cover={movie.cover}
-            upvotes={movie.upvotes}
-            downvotes={movie.downvotes}
-            userVote={movie.userVote}
-            onVote={handleVote}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      <section className="mt-4 pt-2" aria-label="Listado de películas para votar">
+        <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 g-md-5 justify-content-center" role="list">
+          {movies.length === 0 ? (
+            <p className="votar-empty-state text-center" role="status">No hay películas disponibles para votar.</p>
+          ) : (
+            movies.map((movie) => (
+              <div key={movie.movieId} className="col d-flex justify-content-center">
+                <MovieCard
+                  movie_id={movie.movieId}
+                  title={movie.title}
+                  description={movie.description}
+                  cover={movie.cover}
+                  upvotes={movie.upvotes}
+                  downvotes={movie.downvotes}
+                  userVote={movie.userVote}
+                  onVote={handleVote}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              </div>
+            ))
+          )}
+        </div>
+      </section>
     </main>
   );
 }

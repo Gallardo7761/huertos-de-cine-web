@@ -1,5 +1,5 @@
 .movie-card {
-  background-color: var(--cocoa-brown) !important;
+  background-color: var(--bg-main) !important;
   border: none !important;
 }
 
@@ -27,12 +27,12 @@
 }
 
 .movie-vote {
-  background-color: var(--cocoa-brown-light-2) !important;
+  background-color: var(--bg-elevated) !important;
   font-size: 2.5rem !important;
 }
 
 .vote-button {
-  color: var(--selective-yellow) !important;
+  color: var(--accent-primary) !important;
 }
 
 .vote-button.active {
@@ -40,7 +40,7 @@
 }
 
 .vote-count {
-  color: var(--selective-yellow) !important;
+  color: var(--accent-primary) !important;
   font-weight: 600 !important;
 }
 
@@ -53,7 +53,22 @@
 }
 
 .movie-description {
-  color: var(--text-color) !important;
+  color: var(--text-primary) !important;
   font-size: 1.1rem !important;
   line-height: 1.4 !important;
+}
+.vote-button.active-up {
+  color: var(--upvote-color) !important;
+}
+
+.vote-button.active-down {
+  color: var(--downvote-color) !important;
+}
+
+.vote-score.score-up {
+  color: var(--upvote-color) !important;
+}
+
+.vote-score.score-down {
+  color: var(--downvote-color) !important;
 }

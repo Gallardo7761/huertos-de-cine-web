@@ -4,18 +4,14 @@ import { Modal, Button } from "react-bootstrap";
 
 const CustomModal = ({ show, onClose, title, children }) => {
     return (
-        <Modal show={show} onHide={onClose} size="md" centered>
-            <Modal.Header className='justify-content-between'>
-                <Modal.Title>{title}</Modal.Title>
-                <Button variant='transparent' onClick={onClose}>
-                    <FontAwesomeIcon icon={faXmark} className='close-button fa-xl' />
-                </Button>
+        <Modal show={show} onHide={onClose} size="md" centered contentClassName="rounded-4 custom-modal-dark">
+            <Modal.Header className='rounded-top-4 border-0'>
+                <Modal.Title className="fw-bold">{title}</Modal.Title>
             </Modal.Header>
             <Modal.Body className="p-0"
                 style={{
                     maxHeight: '80vh',
                     overflowY: 'auto',
-                    padding: '1rem',
                 }}>
                 {children}
             </Modal.Body>

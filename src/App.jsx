@@ -7,10 +7,14 @@ import Footer from "@/components/Footer";
 import ProtectedRoute from "@/components/Auth/ProtectedRoute";
 import { CONSTANTS } from "@/util/constants";
 import Admin from "@/pages/Admin";
+import useSessionRenewal from "@/hooks/useSessionRenewal";
 
 const App = () => {
+  const { modal: renewalModal } = useSessionRenewal();
+
   return (
     <>
+      {renewalModal}
       <Header />
       <Routes>
         <Route path="/" element={<Votar />} />

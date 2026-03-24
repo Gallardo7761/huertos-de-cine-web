@@ -76,7 +76,7 @@ export const useData = (config, onError) => {
 
     try {
       const response = await axios.get(current.baseUrl, {
-        headers: getAuthHeaders(),
+        headers: { ...getAuthHeaders(), ...current.headers },
         params: current.params,
       });
       setData(response.data);

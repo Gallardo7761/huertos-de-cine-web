@@ -24,15 +24,15 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--selective-yellow);
-    color: var(--cocoa-brown);
+    background-color: var(--accent-primary);
+    color: var(--bg-main);
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s, transform 0.3s;
 }
 
 .menu-toggle:hover {
-    background-color: var(--selective-yellow-light);
+    background-color: var(--accent-hover);
 }
 
 .menu-buttons button {
@@ -43,7 +43,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--selective-yellow);
+    background-color: var(--accent-primary);
     color: white;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -51,5 +51,5 @@
 }
 
 .menu-buttons button:hover {
-    background-color: var(--selective-yellow-light);
+    background-color: var(--accent-hover);
 }

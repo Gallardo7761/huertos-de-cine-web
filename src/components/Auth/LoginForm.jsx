@@ -6,7 +6,6 @@ import PasswordInput from './PasswordInput.jsx';
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext.jsx";
-import useBreakpoint from '@/hooks/useBreakpoint';
 
 import '@/css/LoginForm.css';
 import { CONSTANTS } from '@/util/constants.js';
@@ -14,7 +13,6 @@ import { CONSTANTS } from '@/util/constants.js';
 const LoginForm = () => {
     const { login, error } = useContext(AuthContext);
     const navigate = useNavigate();
-    const bp = useBreakpoint();
 
     const [formState, setFormState] = useState({
         username: "",
@@ -38,7 +36,7 @@ const LoginForm = () => {
     };
 
     return (
-        <div className={`login-card card shadow p-5 ${['xs', 'sm'].includes(bp) ? "rounded-0" : "rounded-5"} mx-auto col-12 col-md-8 col-lg-6 col-xl-5 d-flex flex-column gap-4`}>
+        <div className="login-card card shadow p-5 rounded-5 mx-auto col-12 col-md-8 col-lg-6 col-xl-5 d-flex flex-column gap-4">
             <h1 className="text-center">Hola ¿te conozco?</h1>
             <Form className="d-flex flex-column gap-4" onSubmit={handleSubmit}>
                 <div className="d-flex flex-column gap-3">
@@ -63,22 +61,6 @@ const LoginForm = () => {
                         onChange={handleChange}
                         name="password"
                     />
-
-                    {/**<div className="d-flex flex-column flex-sm-row justify-content-between align-items-center gap-2">
-                        <Form.Check
-                            type="checkbox"
-                            name="keepLoggedIn"
-                            label="Mantener sesión iniciada"
-                            className="text-secondary"
-                            value={formState.keepLoggedIn}
-                            onChange={(e) => {
-                                setFormState((prev) => ({
-                                    ...prev,
-                                    keepLoggedIn: e.target.checked,
-                                }));
-                            }}
-                        />
-                    </div> */}
                 </div>
 
                 {error && (

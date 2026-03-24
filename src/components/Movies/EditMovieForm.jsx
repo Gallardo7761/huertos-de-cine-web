@@ -13,9 +13,9 @@ const EditMovieForm = ({ initialData, onSubmit, onCancel }) => {
     e.preventDefault();
     const validationErrors = [];
     
-    if (!title.trim()) validationErrors.push("Illo, ponle un título a la peli.");
-    if (!description.trim()) validationErrors.push("La descripción no puede estar vacía, miarma.");
-    if (!cover.trim()) validationErrors.push("Necesitamos el link del cartel de IMDB.");
+    if (!title.trim()) validationErrors.push("El título no puede estar vacío")
+    if (!description.trim()) validationErrors.push("La descripción no puede estar vacía");
+    if (!cover.trim()) validationErrors.push("El link de la portada no puede estar vacío");
 
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
@@ -95,7 +95,7 @@ const EditMovieForm = ({ initialData, onSubmit, onCancel }) => {
           <Button variant="outline-danger" onClick={onCancel} className="rounded-4 px-4">
             <FontAwesomeIcon icon={faCancel} className="me-2" /> Cancelar
           </Button>
-          <Button variant="warning" type="submit" className="rounded-4 px-4 shadow-sm">
+          <Button variant="primary" type="submit" className="rounded-4 px-4 shadow-sm">
             <FontAwesomeIcon icon={faSave} className="me-2" /> Guardar Cambios
           </Button>
         </div>

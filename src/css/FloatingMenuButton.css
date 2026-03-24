@@ -7,13 +7,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background-color: var(--selective-yellow);
-    color: var(--cocoa-brown) !important;
+    background-color: var(--accent-primary);
+    color: var(--bg-main) !important;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: background-color 0.3s, transform 0.3s;
 }
 
 .floating-menu-button:hover {
-    background-color: var(--selective-yellow-light);
+    background-color: var(--accent-hover);
 }

@@ -1,14 +1,110 @@
-.navbar-nav .nav-link {
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-transform: uppercase;
-    color: var(--selective-yellow);
-}
-
-.navbar-nav .nav-link:hover {
-    color: var(--selective-yellow-light);
-}
-
 nav.navbar {
-    background-color: var(--cocoa-brown);
+    background-color: var(--bg-main);
+}
+
+.navbar-main-links,
+.navbar-right-content {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-nav .nav-link {
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    transition: color 0.2s ease;
+}
+
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus,
+.navbar-nav .nav-link:active {
+    color: var(--accent-hover);
+}
+
+.navbar-nav .nav-link:focus-visible,
+.navbar-trigger:focus-visible,
+.navbar-close-btn:focus-visible {
+    outline: 2px solid var(--accent-hover);
+    outline-offset: 2px;
+}
+
+.navbar-trigger {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.3rem;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--accent-muted);
+    border-radius: 0.5rem;
+    background-color: transparent;
+}
+
+.navbar-trigger-line {
+    display: block;
+    width: 1.2rem;
+    height: 0.125rem;
+    background-color: var(--accent-primary);
+}
+
+.navbar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1040;
+    background-color: var(--bg-main);
+    opacity: 0.72;
+    border: 0;
+}
+
+.navbar-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 1050;
+    width: min(90vw, 22rem);
+    height: 100dvh;
+    background-color: var(--bg-surface);
+    border-left: 1px solid var(--bg-border);
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem 1.25rem 1.5rem;
+}
+
+.navbar-drawer-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--bg-border);
+    padding-bottom: 0.75rem;
+}
+
+.navbar-drawer-header p {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--accent-primary);
+}
+
+.navbar-close-btn {
+    background: transparent;
+    border: 0;
+    color: var(--accent-primary);
+    font-size: 2rem;
+    line-height: 1;
+    padding: 0;
+}
+
+.navbar-mobile-links,
+.navbar-mobile-right {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-mobile-right > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem !important;
 }

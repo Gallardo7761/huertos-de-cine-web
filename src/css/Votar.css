@@ -1,0 +1,14 @@
+.votar-header {
+  border-bottom: 1px solid var(--bg-border);
+  padding-bottom: 1rem;
+}
+
+.votar-subtitle {
+  color: var(--text-secondary);
+}
+
+.votar-empty-state {
+  color: var(--text-secondary);
+  width: 100%;
+  padding: 1.5rem 0.75rem;
+}
