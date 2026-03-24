@@ -10,6 +10,8 @@ import { Alert } from "react-bootstrap";
 import { useState } from "react";
 import { useError } from "@/context/ErrorContext";
 import "@/css/Votar.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 
 const identity = JSON.parse(localStorage.getItem('identity') || '{}');
 const userId = identity.user?.userId || identity.userId;
@@ -43,13 +45,7 @@ const Votar = () => {
 const VotarContent = () => {
   const { data, dataLoading, dataError, postData, putData, deleteData } = useDataContext();
   const { config } = useConfig();
-  const [showAlert, setShowAlert] = useState(() => localStorage.getItem("votarTipDismissed") !== "true");
   const movies = Array.isArray(data) ? data : [];
-
-  const handleCloseAlert = () => {
-    localStorage.setItem("votarTipDismissed", "true");
-    setShowAlert(false);
-  };
 
   const handleVote = async (movie_id, type) => {
     if (!config) return;
@@ -106,20 +102,11 @@ const VotarContent = () => {
     <main className="container py-4" aria-labelledby="votar-title">
       <header className="votar-header text-center mb-5 px-2">
         <h1 id="votar-title" className="mb-3">Votación de películas</h1>
-        <p className="votar-subtitle m-0">Elige tus favoritas con voto positivo o negativo.</p>
+        <p className="votar-subtitle m-0">
+          <FontAwesomeIcon icon={faInfoCircle} className="me-2 text-warning" />
+          <strong className="text-warning"><u>Tip:</u></strong> haz click en la portada para ver la descripción
+        </p>
       </header>
-
-      {showAlert && (
-        <Alert
-          className="mx-auto mb-3 text-center col-11 col-md-10 col-lg-8"
-          variant="warning"
-          dismissible
-          onClose={handleCloseAlert}
-          role="status"
-        >
-          <strong>Tip: haz click en la portada para ver la descripción</strong>
-        </Alert>
-      )}
 
       <section className="mt-4 pt-2" aria-label="Listado de películas para votar">
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 g-md-5 justify-content-center" role="list">

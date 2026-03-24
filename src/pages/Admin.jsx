@@ -76,11 +76,6 @@ const AdminContent = ({ reqConfig }) => {
 
     return (
         <main className="container py-4 admin-page py-lg-5" aria-labelledby="admin-title">
-            <header className="admin-page-header mb-4">
-                <h1 id="admin-title" className="mb-2">Administración de usuarios</h1>
-                <p className="admin-subtitle m-0">Gestiona solicitudes y usuarios activos desde un único panel.</p>
-            </header>
-
             <section className="admin-section mb-4" aria-labelledby="pending-users-title">
                 <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
                     <h2 id="pending-users-title" className="m-0">Solicitudes</h2>
@@ -132,6 +127,12 @@ const AdminContent = ({ reqConfig }) => {
             <section className="admin-section" aria-labelledby="peliculas-title">
                 <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
                     <h2 id="peliculas-title" className="m-0">Películas</h2>
+                    <small>0 películas</small>
+                </div>
+                <div className="rounded-4 p-3 user-container" role="region" aria-label="Películas">
+                    <div className="row g-3 m-0">
+                        <p className="admin-empty-state m-0" role="status">No hay películas añadidas.</p>
+                    </div>
                 </div>
             </section>
         </main>

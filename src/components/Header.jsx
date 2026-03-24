@@ -49,6 +49,9 @@ const Header = () => {
                             <Link to="/login" onClick={handleLogout} className="nav-link p-0">
                                 Iniciar sesión
                             </Link>
+                            <Link to="/apuntarse" onClick={handleLogout} className="nav-link p-0">
+                                Apuntarse
+                            </Link>
                         </IfNotAuthenticated>
                     </div>
                 }
