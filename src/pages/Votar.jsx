@@ -47,11 +47,11 @@ const VotarContent = () => {
   const { config } = useConfig();
   const movies = Array.isArray(data) ? data : [];
 
-  const handleVote = async (movie_id, type) => {
+  const handleVote = async (movieId, type) => {
     if (!config) return;
 
     const action = type === 1 ? 'upvote' : 'downvote';
-    const url = `${config.apiConfig.baseUrl}/movies/${movie_id}/${action}`;
+    const url = `${config.apiConfig.baseUrl}/movies/${movieId}/${action}`;
 
     try {
       await postData(url, {}, true, { "X-User-Id": userId });
@@ -60,9 +60,9 @@ const VotarContent = () => {
     }
   };
 
-  const handleEdit = async (movie_id, formData) => {
+  const handleEdit = async (movieId, formData) => {
     if (!config) return;
-    const url = `${config.apiConfig.baseUrl}/movies/${movie_id}`;
+    const url = `${config.apiConfig.baseUrl}/movies/${movieId}`;
     try {
       await putData(url, formData, true);
     } catch (err) {
@@ -70,9 +70,9 @@ const VotarContent = () => {
     }
   };
 
-  const handleDelete = async (movie_id) => {
+  const handleDelete = async (movieId) => {
     if (!config) return;
-    const url = `${config.apiConfig.baseUrl}/movies/${movie_id}`;
+    const url = `${config.apiConfig.baseUrl}/movies/${movieId}`;
     try {
       await deleteData(url, true);
     } catch (err) {
@@ -100,14 +100,6 @@ const VotarContent = () => {
 
   return (
     <main className="container py-4" aria-labelledby="votar-title">
-      <header className="votar-header text-center mb-5 px-2">
-        <h1 id="votar-title" className="mb-3">Votación de películas</h1>
-        <p className="votar-subtitle m-0">
-          <FontAwesomeIcon icon={faInfoCircle} className="me-2 text-warning" />
-          <strong className="text-warning"><u>Tip:</u></strong> haz click en la portada para ver la descripción
-        </p>
-      </header>
-
       <section className="mt-4 pt-2" aria-label="Listado de películas para votar">
         <div className="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-4 g-md-5 justify-content-center" role="list">
           {movies.length === 0 ? (
@@ -116,7 +108,7 @@ const VotarContent = () => {
             movies.map((movie) => (
               <div key={movie.movieId} className="col d-flex justify-content-center">
                 <MovieCard
-                  movie_id={movie.movieId}
+                  movieId={movie.movieId}
                   title={movie.title}
                   description={movie.description}
                   cover={movie.cover}

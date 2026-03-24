@@ -1,140 +1,161 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import UserCard from "@/components/Users/UserCard";
+import MovieCard from "@/components/Movies/MovieCard";
 import LoadingIcon from "@/components/LoadingIcon";
 import { DataProvider } from "@/context/DataContext";
 import { useConfig } from "@/hooks/useConfig";
 import { useDataContext } from "@/hooks/useDataContext";
-import '@/css/Admin.css';
 import { useError } from "@/context/ErrorContext";
-import { Alert, Badge } from "react-bootstrap";
+import { Alert } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
+import CustomModal from '@/components/CustomModal';
+import '@/css/Admin.css';
+import '@/css/MovieCard.css';
+import MovieForm from "@/components/Movies/MovieForm";
 
 const Admin = () => {
     const { config, configLoading } = useConfig();
     const { showError } = useError();
 
     if (configLoading) return (
-        <section className="text-center py-5" role="status" aria-live="polite" aria-label="Cargando administración">
+        <section className="text-center py-5" role="status">
             <div className="spinner-border primary" role="status"></div>
-            <p className="mt-2">Cargando...</p>
+            <p className="mt-2">Cargando administración...</p>
         </section>
     );
 
     const reqConfig = {
-        baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.viewers.all}`,
+        baseUrl: `${config.apiConfig.baseUrl}${config.apiConfig.endpoints.admin.dashboard}`,
         params: {},
     };
 
     return (
         <DataProvider config={reqConfig} onError={showError}>
-            <AdminContent reqConfig={reqConfig} />
+            <AdminContent />
         </DataProvider>
     );
 }
 
-const AdminContent = ({ reqConfig }) => {
-    const { data, dataLoading, dataError, getData, postData } = useDataContext();
+const AdminContent = () => {
+    const { data, dataLoading, dataError, postData, putData, deleteData } = useDataContext();
+    const { config } = useConfig();
+    const [showAddModal, setShowAddModal] = useState(false);
 
-    const identities = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+    const requests = data?.requests || [];
+    const viewers = data?.viewers || [];
+    const movies = data?.movies || [];
 
-    const pendingIdentities = identities.filter(identity => identity?.account?.status !== 1);
-    const activeIdentities = identities.filter(identity => identity?.account?.status === 1);
+    const getUrl = (path) => `${config.apiConfig.baseUrl}${path}`;
 
-    if (dataLoading) return (
-        <section className="text-center py-5" role="status" aria-live="polite" aria-label="Cargando usuarios">
-            <LoadingIcon />
-        </section>
-    );
-    if (dataError) return (
-        <main className="container py-4" role="main">
-            <Alert variant="danger" role="alert">Error: {dataError.message}</Alert>
-        </main>
-    );
+    const handleAcceptRequest = async (requestId) => {
+        const endpoint = config.apiConfig.endpoints.requests.accept.replace(':requestId', requestId);
+        await postData(getUrl(endpoint), {});
+    };
 
-    const handleAdd = async (identity) => {
-        try {
-            await postData(reqConfig.baseUrl, {
-                userId: identity.user.userId,
-                role: identity.account?.role ?? 1,
-                status: 1,
-            });
-        } catch (error) {
-            console.error('Error añadiendo usuario:', error);
-        }
-    }
+    const handleAddMovie = async (formData) => {
+        const endpoint = config.apiConfig.endpoints.movies.all;
+        await postData(getUrl(endpoint), formData);
+        setShowAddModal(false);
+    };
 
-    const handleDelete = async (identity) => {
-        try {
-            await postData(reqConfig.baseUrl, {
-                userId: identity.user.userId,
-                role: 0,
-                status: 0,
-            });
-        } catch (error) {
-            console.error('Error borrando usuario:', error);
-        }
-    }
+    const handleEditMovie = async (movieId, formData) => {
+        const endpoint = config.apiConfig.endpoints.movies.all + `/${movieId}`; 
+        await putData(getUrl(endpoint), formData);
+    };
+
+    const handleDeleteMovie = async (movieId) => {
+        const endpoint = config.apiConfig.endpoints.movies.all + `/${movieId}`;
+        await deleteData(getUrl(endpoint));
+    };
+
+    const handleDeleteViewer = async (identity) => {
+        const endpoint = config.apiConfig.endpoints.viewers.all;
+        await postData(getUrl(endpoint), {
+            userId: identity.user.userId,
+            role: 0,
+            status: 0,
+        });
+    };
+
+    if (dataLoading) return <section className="text-center py-5"><LoadingIcon /></section>;
+    if (dataError) return <div className="container py-4"><Alert variant="danger">{dataError.message}</Alert></div>;
 
     return (
         <main className="container py-4 admin-page py-lg-5" aria-labelledby="admin-title">
-            <section className="admin-section mb-4" aria-labelledby="pending-users-title">
-                <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
-                    <h2 id="pending-users-title" className="m-0">Solicitudes</h2>
-                    <small>{pendingIdentities.length === 1 ? `${pendingIdentities.length} solicitud` : `${pendingIdentities.length} solicitudes`}</small>
-                </div>
 
-                <div className="rounded-4 p-3 user-container" role="region" aria-label="Lista de solicitudes pendientes">
+            <section className="admin-section mb-4">
+                <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
+                    <h2 className="m-0 text-white">Solicitudes</h2>
+                    <small className="text-muted">{requests.length} solicitudes</small>
+                </div>
+                <div className="rounded-4 p-3 user-container">
                     <div className="row g-3 m-0">
-                        {pendingIdentities.length === 0 ? (
-                            <p className="admin-empty-state m-0" role="status">No hay solicitudes pendientes.</p>
-                        ) : (
-                            pendingIdentities.map((identity) => (
-                                <UserCard
-                                    key={identity.user.userId}
-                                    identity={identity}
-                                    renderMode="add"
-                                    onAdd={() => handleAdd(identity)}
+                        {requests.length === 0 ? <p className="admin-empty-state m-0">Sin solicitudes.</p> : 
+                            requests.map(req => <UserCard key={req.requestId} identity={{user: req, account: {status: 0}}} renderMode="add" onAdd={() => handleAcceptRequest(req.requestId)} />)}
+                    </div>
+                </div>
+            </section>
+
+            <section className="admin-section mb-4">
+                <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
+                    <h2 className="m-0 text-white">Usuarios añadidos</h2>
+                    <small className="text-muted">{viewers.length} usuarios</small>
+                </div>
+                <div className="rounded-4 p-3 user-container">
+                    <div className="row g-3 m-0">
+                        {viewers.length === 0 ? <p className="admin-empty-state m-0">Sin usuarios.</p> : 
+                            viewers.map(v => <UserCard key={v.user.userId} identity={v} renderMode="delete" onDelete={() => handleDeleteViewer(v)} />)}
+                    </div>
+                </div>
+            </section>
+
+            <section className="admin-section">
+                <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
+                    <h2 className="m-0 text-white">Películas</h2>
+                    <small className="text-muted">{movies.length} {movies.length === 1 ? 'película' : 'películas'}</small>
+                </div>
+                <div className="rounded-4 p-3 user-container">
+                    <div className="row g-3 m-0">
+                        {movies.map((movie) => (
+                            <div key={movie.movieId} className="col-12 col-sm-6 col-md-4 col-lg-3 p-3 m-0">
+                                <MovieCard
+                                    {...movie}
+                                    onVote={() => {}}
+                                    onEdit={handleEditMovie}
+                                    onDelete={handleDeleteMovie}
+                                    isAdmin
                                 />
-                            ))
-                        )}
+                            </div>
+                        ))}
+
+                        <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-3 m-0">
+                            <div 
+                                className="movie-card add-movie-card rounded-4 d-flex flex-column align-items-center justify-content-center h-100"
+                                onClick={() => setShowAddModal(true)}
+                                style={{ 
+                                    cursor: 'pointer', 
+                                    aspectRatio: '2/3',
+                                    border: '2px dashed #444', 
+                                    background: 'rgba(255,255,255,0.03)',
+                                    transition: 'all 0.2s ease-in-out'
+                                }}
+                            >
+                                <FontAwesomeIcon icon={faPlus} size="3x" className="mb-2 text-secondary" />
+                                <span className="text-secondary fw-bold">Añadir Película</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section className="admin-section mb-4" aria-labelledby="active-users-title">
-                <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
-                    <h2 id="active-users-title" className="m-0">Usuarios añadidos</h2>
-                    <small>{activeIdentities.length === 1 ? `${activeIdentities.length} usuario` : `${activeIdentities.length} usuarios`}</small>
-                </div>
-
-                <div className="rounded-4 p-3 user-container" role="region" aria-label="Lista de usuarios activos">
-                    <div className="row g-3 m-0">
-                        {activeIdentities.length === 0 ? (
-                            <p className="admin-empty-state m-0" role="status">No hay usuarios activos.</p>
-                        ) : (
-                            activeIdentities.map((identity) => (
-                                <UserCard
-                                    key={identity.user.userId}
-                                    identity={identity}
-                                    renderMode="delete"
-                                    onDelete={() => handleDelete(identity)}
-                                />
-                            ))
-                        )}
-                    </div>
-                </div>
-            </section>
-
-            <section className="admin-section" aria-labelledby="peliculas-title">
-                <div className="d-flex justify-content-between align-items-center gap-3 mb-2 flex-wrap">
-                    <h2 id="peliculas-title" className="m-0">Películas</h2>
-                    <small>0 películas</small>
-                </div>
-                <div className="rounded-4 p-3 user-container" role="region" aria-label="Películas">
-                    <div className="row g-3 m-0">
-                        <p className="admin-empty-state m-0" role="status">No hay películas añadidas.</p>
-                    </div>
-                </div>
-            </section>
+            <CustomModal show={showAddModal} onClose={() => setShowAddModal(false)} title="Nueva Película">
+                <MovieForm 
+                    initialData={{ title: '', description: '', cover: '' }}
+                    onSubmit={handleAddMovie}
+                    onCancel={() => setShowAddModal(false)}
+                />
+            </CustomModal>
         </main>
     );
 }

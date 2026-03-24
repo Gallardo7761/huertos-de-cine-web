@@ -3,18 +3,20 @@
   border: none !important;
 }
 
-.movie-card button.delete-button {
-  border-top-left-radius: 0rem !important;
-  border-top-right-radius: 1rem !important;
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+.movie-card button.delete-button,
+.movie-card button.edit-button {
+  width: 35px !important;
+  height: 35px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  border: 1px solid black;
 }
 
-.movie-card button.edit-button {
-  border-top-left-radius: 0rem !important;
-  border-top-right-radius: 0rem !important;
-  border-bottom-left-radius: 0 !important;
-  border-bottom-right-radius: 0 !important;
+.movie-card .edit-button {
+  margin-right: 5px;
 }
 
 .movie-card:hover {

@@ -3,7 +3,7 @@ import { Form, Button, Alert, Image } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenFancy, faAlignCenter, faImage, faSave, faCancel, faLink } from '@fortawesome/free-solid-svg-icons';
 
-const EditMovieForm = ({ initialData, onSubmit, onCancel }) => {
+const MovieForm = ({ initialData, onSubmit, onCancel }) => {
   const [title, setTitle] = useState(initialData?.title || "");
   const [description, setDescription] = useState(initialData?.description || "");
   const [cover, setCover] = useState(initialData?.cover || "");
@@ -104,4 +104,4 @@ const EditMovieForm = ({ initialData, onSubmit, onCancel }) => {
   );
 };
 
-export default EditMovieForm;
+export default MovieForm;

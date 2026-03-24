@@ -1,3 +1,28 @@
+@font-face {
+  font-family: "Open Sans";
+  src: url('/fonts/OpenSans.ttf');
+}
+
+@font-face {
+  font-family: "Product Sans";
+  src: url('/fonts/ProductSansRegular.ttf');
+}
+
+@font-face {
+  font-family: "Product Sans Italic";
+  src: url('/fonts/ProductSansItalic.ttf');
+}
+
+@font-face {
+  font-family: "Product Sans Italic Bold";
+  src: url('/fonts/ProductSansBoldItalic.ttf');
+}
+
+@font-face {
+  font-family: "Product Sans Bold";
+  src: url('/fonts/ProductSansBold.ttf');
+}
+
 :root {
     --bg-main: #121212;
     --bg-surface: #1E1E1E;
@@ -30,7 +55,11 @@ button {
 }
 
 h1,
-h2,
+h2 {
+  font-family: "Product Sans Bold", sans-serif;
+  color: var(--text-primary);
+}
+
 h3,
 h4,
 h5,

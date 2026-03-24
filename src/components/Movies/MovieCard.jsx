@@ -1,18 +1,15 @@
 import '@/css/MovieCard.css';
 import { useState } from 'react';
 import CustomModal from '@/components/CustomModal';
-import { faCancel, faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faCancel, faEdit, faTrash, faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, Alert } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import IfRole from '@/components/Auth/IfRole';
 import { CONSTANTS } from '@/util/constants';
-import EditMovieForm from './EditMovieForm';
-import { useAuth } from '@/hooks/useAuth';
-import { faThumbsDown, faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import MovieForm from './MovieForm';
 
-const MovieCard = ({ movie_id, title, description, cover, upvotes, downvotes, userVote, onVote, onEdit, onDelete }) => {
+const MovieCard = ({ movieId, title, description, cover, upvotes, downvotes, userVote, onVote, onEdit, onDelete, isAdmin }) => {
   const [modal, setModal] = useState(false);
-  const { authStatus } = useAuth();
   const [editModal, setEditModal] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   const totalScore = upvotes - downvotes;
@@ -20,40 +17,44 @@ const MovieCard = ({ movie_id, title, description, cover, upvotes, downvotes, us
   return (
     <>
       <div className="movie-card rounded-4 card h-100 m-0 p-0 shadow-sm">
-        <IfRole roles={[CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>
-          <div className="d-flex m-0 p-0 position-absolute top-0 end-0" style={{ zIndex: 10 }}>
-            <button className="btn btn-primary edit-button" onClick={() => setEditModal(true)}>
-              <FontAwesomeIcon icon={faEdit} />
-            </button>
-            <button className="btn btn-danger delete-button" onClick={() => setDeleteTarget(movie_id)}>
-              <FontAwesomeIcon icon={faTrash} />
-            </button>
-          </div>
-        </IfRole>
+        {isAdmin && (
+          <IfRole roles={[CONSTANTS.ROLE_ADMIN, CONSTANTS.ROLE_DEV]}>
+            <div className="d-flex m-0 p-2 position-absolute top-0 end-0 gap-2" style={{ zIndex: 10 }}>
+              <button className="btn btn-light edit-button" onClick={() => setEditModal(true)}>
+                <FontAwesomeIcon icon={faEdit} />
+              </button>
+              <button className="btn btn-light delete-button" onClick={() => setDeleteTarget(movieId)}>
+                <FontAwesomeIcon icon={faTrash} />
+              </button>
+            </div>
+          </IfRole>
+        )}
 
         <img
           src={cover}
           alt={title}
           onClick={() => setModal(true)}
-          className={authStatus === "authenticated" ? `rounded-top-4` : `rounded-4`}
+          className={!isAdmin ? `rounded-top-4` : `rounded-4`}
           style={{ cursor: 'pointer' }}
         />
 
-        <div className="card-footer movie-vote rounded-bottom-4">
-          <div className="d-flex align-items-center justify-content-center gap-3">
-            <span onClick={() => onVote(movie_id, 1)} className={`vote-button ${userVote === 1 ? 'active-up' : ''}`}>
-              <FontAwesomeIcon icon={faThumbsUp} />
-            </span>
+        {!isAdmin && (
+          <div className="card-footer movie-vote rounded-bottom-4">
+            <div className="d-flex align-items-center justify-content-center gap-3">
+              <span onClick={() => onVote(movieId, 1)} className={`vote-button ${userVote === 1 ? 'active-up' : ''}`}>
+                <FontAwesomeIcon icon={faThumbsUp} />
+              </span>
 
-            <small className={`fw-bold vote-score ${userVote === 1 ? 'score-up' : userVote === -1 ? 'score-down' : ''}`}>
-              {totalScore}
-            </small>
+              <small className={`fw-bold vote-score ${userVote === 1 ? 'score-up' : userVote === -1 ? 'score-down' : ''}`}>
+                {totalScore}
+              </small>
 
-            <span onClick={() => onVote(movie_id, -1)} className={`vote-button ${userVote === -1 ? 'active-down' : ''}`}>
-              <FontAwesomeIcon icon={faThumbsDown} />
-            </span>
+              <span onClick={() => onVote(movieId, -1)} className={`vote-button ${userVote === -1 ? 'active-down' : ''}`}>
+                <FontAwesomeIcon icon={faThumbsDown} />
+              </span>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       <CustomModal show={modal} onClose={() => setModal(false)} title={title}>
@@ -61,10 +62,10 @@ const MovieCard = ({ movie_id, title, description, cover, upvotes, downvotes, us
       </CustomModal>
 
       <CustomModal show={editModal} onClose={() => setEditModal(false)} title="Editar Película">
-        <EditMovieForm
+        <MovieForm
           initialData={{ title, description, cover }}
           onSubmit={(formData) => {
-            onEdit(movie_id, formData);
+            onEdit(movieId, formData);
             setEditModal(false);
           }}
           onCancel={() => setEditModal(false)}
@@ -81,7 +82,7 @@ const MovieCard = ({ movie_id, title, description, cover, upvotes, downvotes, us
             </Button>
 
             <Button variant="danger" type="submit" className="rounded-4" onClick={async () => {
-              await onDelete(movie_id);
+              await onDelete(movieId);
               setDeleteTarget(null);
             }}>
               <FontAwesomeIcon icon={faTrash} className="me-2" /> Borrar

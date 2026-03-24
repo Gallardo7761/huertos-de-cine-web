@@ -9,6 +9,9 @@
                 "changePassword": "/auth/change-password",
                 "validateToken": "/auth/validate"
             },
+            "admin": {
+                "dashboard": "/admin/dashboard"
+            },
             "viewers": {
                 "all": "/viewers",
                 "byId": "/viewers/:userId"
