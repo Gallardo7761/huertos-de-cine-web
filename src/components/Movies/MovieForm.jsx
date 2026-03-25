@@ -73,21 +73,27 @@ const MovieForm = ({ initialData, onSubmit, onCancel }) => {
             value={cover}
             onChange={(e) => setCover(e.target.value)}
             className="rounded-4 themed-input"
-            placeholder="https://m.media-amazon.com/images/..."
+            placeholder="Pega aquí el enlace de la imagen..."
           />
         </Form.Group>
 
-        {cover && (
+        {cover && cover.trim() !== "" && (
           <div className="text-center mb-3">
-            <p className="small text-secondary mb-1">Previsualización:</p>
-            <Image 
-              src={cover} 
-              alt="Preview" 
-              thumbnail 
-              className="rounded-4 shadow-sm" 
-              style={{ maxHeight: '200px' }}
-              onError={(e) => e.target.src = 'https://placehold.co/200x300?text=URL+Invalida'}
-            />
+            <p className="small text-secondary mb-1">Previsualización en tiempo real:</p>
+            <div className="d-inline-block position-relative">
+              <Image 
+                key={cover}
+                src={cover} 
+                alt="Preview" 
+                thumbnail 
+                className="rounded-4 shadow-sm" 
+                style={{ maxHeight: '250px', minWidth: '150px', objectFit: 'contain' }}
+                onError={(e) => {
+                  const seed = title ? encodeURIComponent(title) : 'movie';
+                  e.target.src = `https://picsum.photos/seed/${seed}/300/450`;
+                }}
+              />
+            </div>
           </div>
         )}
 
