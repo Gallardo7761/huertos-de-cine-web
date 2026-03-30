@@ -1,0 +1,22 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /v2/cine
+
+spring:
+  datasource:
+    url: jdbc:mariadb://mariadb:3306/miarma_v2
+    username: ${DB_USER}
+    password: ${DB_PASS}
+    driver-class-name: org.mariadb.jdbc.Driver
+
+logging:
+  level:
+    org.hibernate.SQL: WARN
+
+core:
+  url: http://core:8080/v2/core
+
+cine:
+  user: SYSTEM
+  password: ${CINE_PASS}
