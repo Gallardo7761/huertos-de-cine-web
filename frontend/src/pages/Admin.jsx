@@ -13,6 +13,7 @@ import CustomModal from '@/components/CustomModal';
 import '@/css/Admin.css';
 import '@/css/MovieCard.css';
 import MovieForm from "@/components/Movies/MovieForm";
+import MovieSearch from "@/components/Movies/MovieSearch";
 
 const Admin = () => {
     const { config, configLoading } = useConfig();
@@ -41,6 +42,7 @@ const AdminContent = () => {
     const { data, dataLoading, dataError, postData, putData, deleteData } = useDataContext();
     const { config } = useConfig();
     const [showAddModal, setShowAddModal] = useState(false);
+    const [tmdbSelection, setTmdbSelection] = useState(null);
 
     const requests = data?.requests || [];
     const viewers = data?.viewers || [];
@@ -68,7 +70,7 @@ const AdminContent = () => {
     };
 
     const handleEditMovie = async (movieId, formData) => {
-        const endpoint = config.apiConfig.endpoints.movies.all + `/${movieId}`; 
+        const endpoint = config.apiConfig.endpoints.movies.all + `/${movieId}`;
         await putData(getUrl(endpoint), formData);
     };
 
@@ -84,7 +86,7 @@ const AdminContent = () => {
         });
     };
 
-    const isFirstLoad = dataLoading && !data; 
+    const isFirstLoad = dataLoading && !data;
 
     if (isFirstLoad) return <section className="text-center py-5"><LoadingIcon /></section>;
     if (dataError) return <div className="container py-4"><Alert variant="danger">{dataError.message}</Alert></div>;
@@ -99,8 +101,8 @@ const AdminContent = () => {
                 </div>
                 <div className="rounded-4 p-3 user-container">
                     <div className="row g-3 m-0">
-                        {pendingRequests.length === 0 ? <p className="admin-empty-state m-0">Sin solicitudes.</p> : 
-                            pendingRequests.map(req => <UserCard key={req.requestId} identity={{user: req, account: {status: 0}}} renderMode="add" onAdd={() => handleAcceptRequest(req.requestId)} onReject={() => handleRejectRequest(req.requestId)} />)}
+                        {pendingRequests.length === 0 ? <p className="admin-empty-state m-0">Sin solicitudes.</p> :
+                            pendingRequests.map(req => <UserCard key={req.requestId} identity={{ user: req, account: { status: 0 } }} renderMode="add" onAdd={() => handleAcceptRequest(req.requestId)} onReject={() => handleRejectRequest(req.requestId)} />)}
                     </div>
                 </div>
             </section>
@@ -112,7 +114,7 @@ const AdminContent = () => {
                 </div>
                 <div className="rounded-4 p-3 user-container">
                     <div className="row g-3 m-0">
-                        {activeViewers.length === 0 ? <p className="admin-empty-state m-0">Sin usuarios.</p> : 
+                        {activeViewers.length === 0 ? <p className="admin-empty-state m-0">Sin usuarios.</p> :
                             activeViewers.map(v => <UserCard key={v.user.userId} identity={v} renderMode="delete" onDelete={() => handleDeleteViewer(v)} />)}
                     </div>
                 </div>
@@ -129,7 +131,7 @@ const AdminContent = () => {
                             <div key={movie.movieId} className="col-12 col-sm-6 col-md-4 col-lg-3 p-3 m-0">
                                 <MovieCard
                                     {...movie}
-                                    onVote={() => {}}
+                                    onVote={() => { }}
                                     onEdit={handleEditMovie}
                                     onDelete={handleDeleteMovie}
                                     isAdmin
@@ -138,13 +140,13 @@ const AdminContent = () => {
                         ))}
 
                         <div className="col-12 col-sm-6 col-md-4 col-lg-3 p-3 m-0">
-                            <div 
+                            <div
                                 className="movie-card add-movie-card rounded-4 d-flex flex-column align-items-center justify-content-center h-100"
                                 onClick={() => setShowAddModal(true)}
-                                style={{ 
-                                    cursor: 'pointer', 
+                                style={{
+                                    cursor: 'pointer',
                                     aspectRatio: '2/3',
-                                    border: '2px dashed #444', 
+                                    border: '2px dashed #444',
                                     background: 'rgba(255,255,255,0.03)',
                                     transition: 'all 0.2s ease-in-out'
                                 }}
@@ -158,10 +160,15 @@ const AdminContent = () => {
             </section>
 
             <CustomModal show={showAddModal} onClose={() => setShowAddModal(false)} title="Nueva Película">
-                <MovieForm 
-                    initialData={{ title: '', description: '', cover: '' }}
+                <div className="px-3 pt-3">
+                    <MovieSearch onSelect={m => setTmdbSelection(m)} />
+                </div>
+
+                <MovieForm
+                    key={tmdbSelection ? 'api-data' : 'empty'}
+                    initialData={tmdbSelection || { title: '', description: '', cover: '' }}
                     onSubmit={handleAddMovie}
-                    onCancel={() => setShowAddModal(false)}
+                    onCancel={() => {setShowAddModal(false); setTmdbSelection(null)}}
                 />
             </CustomModal>
         </main>

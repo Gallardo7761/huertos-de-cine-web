@@ -1,0 +1,72 @@
+.tmdb-search-container {
+    position: relative;
+    width: 100%;
+}
+
+.tmdb-results-list {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    background-color: var(--bg-elevated) !important;
+    border: 1px solid var(--bg-border);
+    border-radius: 12px;
+    max-height: 350px;
+    overflow-y: auto;
+    z-index: 1060;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    padding: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bg-border) transparent;
+}
+
+.tmdb-result-item {
+    background-color: transparent !important;
+    border: none !important;
+    border-radius: 8px !important;
+    margin-bottom: 4px;
+    padding: 0.6rem !important;
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.tmdb-result-item:hover {
+    background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+.tmdb-result-item img {
+    width: 45px;
+    height: 68px;
+    object-fit: cover;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.tmdb-result-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.tmdb-result-title {
+    font-family: "Product Sans Bold", sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    line-height: 1.2;
+}
+
+.tmdb-result-year {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.tmdb-results-list::-webkit-scrollbar {
+    width: 6px;
+}
+.tmdb-results-list::-webkit-scrollbar-thumb {
+    background: var(--bg-border);
+    border-radius: 10px;
+}
